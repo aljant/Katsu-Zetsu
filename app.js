@@ -1,143 +1,305 @@
 // app.js
 let tokenizer = null;
 let currentIndex = 0;
+let isRecording = false;
+let recordStartTime = 0;
 
-const startBtn = document.getElementById('start-btn');
+// DOM Elements - Navigation
+const navItems = document.querySelectorAll('.nav-item');
+const views = document.querySelectorAll('.view');
+const navAnalysis = document.getElementById('nav-analysis');
+
+// DOM Elements - Start View
+const startPracticeBtn = document.getElementById('start-practice-btn');
+const logReady = document.getElementById('log-ready');
+const logReadyMsg = document.getElementById('log-ready-msg');
+const logAwaiting = document.getElementById('log-awaiting');
+
+// DOM Elements - Practice View
+const sessionTitle = document.getElementById('session-title');
+const paragraphCounter = document.getElementById('paragraph-counter');
+const targetTextContainer = document.getElementById('target-text-container');
+const recordBtn = document.getElementById('record-btn');
+const recordBtnText = document.getElementById('record-btn-text');
+const recordStatusText = document.getElementById('record-status-text');
+const waveformIndicator = document.getElementById('waveform-indicator');
+const pulseDot = document.querySelector('.pulse-dot');
+const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
-const statusMsg = document.getElementById('status-msg');
-const targetTextEl = document.getElementById('target-text');
-const targetReadingEl = document.getElementById('target-reading');
-const userTextEl = document.getElementById('user-text');
-const scoreDisplay = document.getElementById('score-display');
 
-// 1. kuromoji.js の初期化（辞書をCDNから直接読み込む）
-const dicUrl = "dict/";
+// DOM Elements - Analysis View
+const scoreAccuracy = document.getElementById('score-accuracy');
+const scoreWpm = document.getElementById('score-wpm');
+const scoreClarity = document.getElementById('score-clarity');
+const clarityGrade = document.getElementById('clarity-grade');
+const diffContent = document.getElementById('diff-content');
+const techFeedback = document.getElementById('technical-feedback');
+const optTip = document.getElementById('optimization-tip');
+const analysisNextBtn = document.getElementById('analysis-next-btn');
+const analysisRetryBtn = document.getElementById('analysis-retry-btn');
+
+// DOM Elements - Dictionary View
+const dictContent = document.getElementById('dictionary-content');
+const dictBackBtn = document.getElementById('dict-back-btn');
+
+// 1. Navigation Logic (SPA)
+function showView(viewId) {
+  views.forEach(view => {
+    view.classList.remove('active');
+  });
+  document.getElementById(`view-${viewId}`).classList.add('active');
+
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    if(item.dataset.target === viewId) {
+      item.classList.add('active');
+    }
+  });
+}
+
+navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    if(!item.disabled) {
+      showView(item.dataset.target);
+    }
+  });
+});
+
+dictBackBtn.addEventListener('click', () => showView('practice'));
+
+// 2. Kuromoji Init and Terminal Animation
+function simulateTerminal() {
+  setTimeout(() => document.getElementById('log-time-2').textContent = geTimeStr(), 1000);
+  setTimeout(() => {
+    document.getElementById('log-time-3').textContent = geTimeStr();
+    logReady.style.display = 'inline-block';
+    logReadyMsg.style.display = 'inline-block';
+  }, 2500);
+}
+function geTimeStr() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
+}
+
+const dicUrl = "dict/"; // Path to dict directory
+simulateTerminal();
+
 kuromoji.builder({ dicPath: dicUrl }).build((err, _tokenizer) => {
   if (err) {
-    statusMsg.textContent = "辞書の読み込みに失敗しました。";
     console.error(err);
+    document.getElementById('log-time-3').textContent = geTimeStr();
+    logReady.textContent = "ERROR";
+    logReady.style.color = "red";
+    logReadyMsg.textContent = "Dictionary load failed.";
+    logReady.style.display = 'inline-block';
+    logReadyMsg.style.display = 'inline-block';
     return;
   }
   tokenizer = _tokenizer;
-  statusMsg.textContent = "準備完了！ボタンを押して話し始めてください。";
-  startBtn.disabled = false;
-  loadCurrentText();
+  
+  setTimeout(() => {
+    logAwaiting.style.display = 'block';
+    startPracticeBtn.classList.remove('disabled');
+    startPracticeBtn.addEventListener('click', () => {
+      loadPracticeData();
+      showView('practice');
+    });
+    populateDictionary();
+  }, 3000); // Give terminal effect some time
 });
 
-// 2. お題の読み込み
-function loadCurrentText() {
+
+// 3. Practice View Logic
+function loadPracticeData() {
   const data = uirouriData[currentIndex];
-  targetTextEl.textContent = data.display;
-  targetReadingEl.textContent = data.reading;
-  userTextEl.innerHTML = "";
-  scoreDisplay.textContent = "";
-  nextBtn.style.display = "none";
-  startBtn.style.display = "inline-block";
-}
-
-// 3. Web Speech API の設定
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (!SpeechRecognition) {
-  statusMsg.textContent = "お使いのブラウザは音声認識に非対応です。Chromeをご利用ください。";
-}
-const recognition = new SpeechRecognition();
-recognition.lang = 'ja-JP';
-recognition.interimResults = false;
-recognition.continuous = false;
-
-// 録音開始イベント
-startBtn.addEventListener('click', () => {
-  recognition.start();
-  statusMsg.textContent = "🔴 録音中... 話してください";
-  startBtn.disabled = true;
-});
-
-// 音声認識終了時の処理
-recognition.onresult = (event) => {
-  const rawTranscript = event.results[0][0].transcript;
-  statusMsg.textContent = "解析中...";
+  sessionTitle.textContent = `Section ${String(Math.floor(currentIndex/5)+1).padStart(2,'0')}: The Articulation`;
+  paragraphCounter.textContent = `Paragraph ${currentIndex + 1} / ${uirouriData.length}`;
   
-  // 取得した漢字混じりテキストをひらがなに変換
-  const hiraganaTranscript = convertToHiragana(rawTranscript);
-  
-  // 判定ロジックへ
-  compareAndDisplay(hiraganaTranscript, uirouriData[currentIndex].reading);
-  
-  statusMsg.textContent = "判定完了";
-  startBtn.style.display = "none";
-  nextBtn.style.display = "inline-block";
-  startBtn.disabled = false;
-};
-
-recognition.onerror = (event) => {
-  statusMsg.textContent = "エラーが発生しました: " + event.error;
-  startBtn.disabled = false;
-};
-
-// 次へボタン
-nextBtn.addEventListener('click', () => {
-  currentIndex++;
-  if (currentIndex >= uirouriData.length) {
-    currentIndex = 0; // 最後までいったら最初に戻る
-    alert("お疲れ様でした！一回り完了です。");
+  // Generate Ruby
+  if(tokenizer) {
+    const tokens = tokenizer.tokenize(data.display);
+    let html = "";
+    tokens.forEach(token => {
+      // If it has kanji and a reading, use ruby
+      if(token.surface_form.match(/[\u4e00-\u9faf]/) && token.reading) {
+         html += `<ruby>${token.surface_form}<rt>${katakanaToHiragana(token.reading)}</rt></ruby>`;
+      } else {
+         html += token.surface_form;
+      }
+    });
+    targetTextContainer.innerHTML = html;
+  } else {
+    targetTextContainer.textContent = data.display;
   }
-  loadCurrentText();
-});
 
-// 4. kuromoji.js を使った「ひらがな変換」ロジック
+  resetRecordingUI();
+}
+
+function katakanaToHiragana(kata) {
+  return kata.replace(/[\u30A1-\u30F6]/g, match => String.fromCharCode(match.charCodeAt(0) - 0x60));
+}
+
 function convertToHiragana(text) {
   if (!tokenizer) return text;
-  
   const tokens = tokenizer.tokenize(text);
   let result = "";
-
   tokens.forEach(token => {
-    // 読み情報があればそれを使用、なければ元の単語そのまま
     let kana = token.reading ? token.reading : token.surface_form;
     result += kana;
   });
-
-  // カタカナをひらがなに変換
-  return result.replace(/[\u30A1-\u30F6]/g, match => {
-    return String.fromCharCode(match.charCodeAt(0) - 0x60);
-  });
+  return katakanaToHiragana(result);
 }
 
-// 5. 正誤判定と比較結果の表示
-function compareAndDisplay(userText, targetReading) {
-  let displayHtml = "";
-  let correctCount = 0;
+prevBtn.addEventListener('click', () => {
+  if(currentIndex > 0) currentIndex--;
+  loadPracticeData();
+});
+nextBtn.addEventListener('click', () => {
+  if(currentIndex < uirouriData.length - 1) currentIndex++;
+  loadPracticeData();
+});
 
-  // ※記号や空白を除外して純粋に文字のみ比較
-  const cleanUserText = userText.replace(/[、。，．\s]/g, "");
-  const maxLength = Math.max(cleanUserText.length, targetReading.length);
 
-  for (let i = 0; i < maxLength; i++) {
-    const userChar = cleanUserText[i] || "";
-    const targetChar = targetReading[i] || "";
+// 4. Speech Recognition Logic
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.lang = 'ja-JP';
+  recognition.interimResults = false;
+  recognition.continuous = false;
 
-    if (userChar === targetChar) {
-      displayHtml += `<span class="correct">${userChar}</span>`;
-      correctCount++;
-    } else {
-      // 間違えた文字、または余分な文字
-      const charToDisplay = userChar ? userChar : "［抜け］";
-      displayHtml += `<span class="incorrect">${charToDisplay}</span>`;
+  recognition.onresult = (event) => {
+    const endTime = Date.now();
+    const durationSec = (endTime - recordStartTime) / 1000;
+    
+    const rawTranscript = event.results[0][0].transcript;
+    const hiraganaTranscript = convertToHiragana(rawTranscript);
+    const targetReading = uirouriData[currentIndex].reading;
+    
+    // Switch to Analysis View and process
+    navAnalysis.disabled = false;
+    processAnalysis(hiraganaTranscript, targetReading, durationSec);
+    showView('analysis');
+    resetRecordingUI();
+  };
+
+  recognition.onerror = (event) => {
+    alert("認識エラー: " + event.error);
+    resetRecordingUI();
+  };
+  
+  recognition.onend = () => {
+    if(isRecording) resetRecordingUI();
+  }
+}
+
+function resetRecordingUI() {
+  isRecording = false;
+  pulseDot.classList.remove('active');
+  recordStatusText.textContent = "WAITING START...";
+  recordBtnText.textContent = "START RECORDING";
+  recordBtn.classList.add('start-mode');
+  recordBtn.querySelector('.stop-icon').textContent = "▶";
+}
+
+recordBtn.addEventListener('click', () => {
+  if(!recognition) {
+    alert("Web Speech API is not supported in this browser.");
+    return;
+  }
+
+  if (isRecording) {
+    recognition.stop();
+    // It will trigger onresult if it caught something, or onend.
+  } else {
+    try {
+      recognition.start();
+      isRecording = true;
+      recordStartTime = Date.now();
+      pulseDot.classList.add('active');
+      recordStatusText.textContent = "LIVE WAVEFORM CAPTURE ACTIVE";
+      recordBtnText.textContent = "STOP & ANALYZE";
+      recordBtn.classList.remove('start-mode');
+      recordBtn.querySelector('.stop-icon').textContent = "■";
+    } catch(e) {
+      console.error(e);
     }
   }
+});
 
-  userTextEl.innerHTML = displayHtml;
+resetRecordingUI();
 
-  // スコア計算
-  const score = Math.floor((correctCount / targetReading.length) * 100);
-  if (score >= 90) {
-    scoreDisplay.style.color = "#27ae60";
-    scoreDisplay.textContent = `🎯 素晴らしい！ スコア: ${score}%`;
-  } else if (score >= 70) {
-    scoreDisplay.style.color = "#f39c12";
-    scoreDisplay.textContent = `👍 惜しい！ スコア: ${score}%`;
-  } else {
-    scoreDisplay.style.color = "#e74c3c";
-    scoreDisplay.textContent = `💦 もう一度練習しましょう！ スコア: ${score}%`;
+// 5. Analysis Logic
+function processAnalysis(userText, targetReading, durationSec) {
+  const cleanUserText = userText.replace(/[、。，．\s]/g, "");
+  const maxLength = Math.max(cleanUserText.length, targetReading.length);
+  
+  let correctCount = 0;
+  let html = "";
+  
+  // Diff Calculation
+  for(let i=0; i<targetReading.length; i++) {
+    const uChar = cleanUserText[i] || "";
+    const tChar = targetReading[i];
+    
+    if(uChar === tChar) {
+      // Find original surface character for nice UI (Approximation: using targetReading length, meaning we map it to Hiragana)
+      // Since mapping to exact Kanji is complex without character-level alignment algorithm (like Levenshtein),
+      // we display the Hiragana diff. Alternatively, we just display the hiragana target and highlight correctness.
+      // Let's display the Hiragana diff to exactly match what the user pronounced vs should have pronounced.
+      html += `<span class="diff-correct">${tChar}</span>`;
+      correctCount++;
+    } else {
+      const displayChar = uChar ? uChar : "［抜］";
+      html += `<span class="diff-incorrect" title="正解: ${tChar}">${displayChar}</span>`;
+    }
   }
+  
+  // Calculate Metrics
+  const accuracy = ((correctCount / targetReading.length) * 100).toFixed(1);
+  const wpm = durationSec > 0 ? Math.floor((cleanUserText.length / durationSec) * 60) : 0;
+  
+  scoreAccuracy.textContent = accuracy;
+  scoreWpm.textContent = wpm;
+  
+  // Clarity
+  scoreClarity.className = 'score-value'; // Reset
+  if(accuracy >= 90) {
+    scoreClarity.classList.add('clarity-high');
+    clarityGrade.textContent = "A+";
+  } else if(accuracy >= 70) {
+    scoreClarity.classList.add('clarity-mid');
+    clarityGrade.textContent = "B";
+    techFeedback.textContent = "Several phonetic drops detected. Focus on clear articulation.";
+    optTip.textContent = "Maintain steady pace.";
+  } else {
+    scoreClarity.classList.add('clarity-low');
+    clarityGrade.textContent = "C";
+    techFeedback.textContent = "Significant mismatch detected. Speak more clearly and louder.";
+    optTip.textContent = "Take a deep breath and articulate each syllable.";
+  }
+  
+  diffContent.innerHTML = html;
+}
+
+analysisNextBtn.addEventListener('click', () => {
+  if(currentIndex < uirouriData.length - 1) currentIndex++;
+  loadPracticeData();
+  showView('practice');
+});
+
+analysisRetryBtn.addEventListener('click', () => {
+  loadPracticeData();
+  showView('practice');
+});
+
+
+// 6. Dictionary Init
+function populateDictionary() {
+  let html = "";
+  uirouriData.forEach((item, idx) => {
+    html += `<p>${item.display}</p>`;
+  });
+  dictContent.innerHTML = html;
 }

@@ -88,9 +88,9 @@ kuromoji.builder({ dicPath: dicUrl }).build((err, _tokenizer) => {
   if (err) {
     console.error(err);
     document.getElementById('log-time-3').textContent = geTimeStr();
-    logReady.textContent = "ERROR";
+    logReady.textContent = "失敗";
     logReady.style.color = "red";
-    logReadyMsg.textContent = "Dictionary load failed.";
+    logReadyMsg.textContent = "辞書データの読み込みに失敗しました。";
     logReady.style.display = 'inline-block';
     logReadyMsg.style.display = 'inline-block';
     return;
@@ -112,8 +112,8 @@ kuromoji.builder({ dicPath: dicUrl }).build((err, _tokenizer) => {
 // 3. Practice View Logic
 function loadPracticeData() {
   const data = uirouriData[currentIndex];
-  sessionTitle.textContent = `Section ${String(Math.floor(currentIndex/5)+1).padStart(2,'0')}: The Articulation`;
-  paragraphCounter.textContent = `Paragraph ${currentIndex + 1} / ${uirouriData.length}`;
+  sessionTitle.textContent = `第 ${currentIndex + 1} 節: 練習中`;
+  paragraphCounter.textContent = `段落 ${currentIndex + 1} / ${uirouriData.length}`;
   
   // Generate Ruby
   if(tokenizer) {
@@ -197,15 +197,15 @@ if (SpeechRecognition) {
 function resetRecordingUI() {
   isRecording = false;
   pulseDot.classList.remove('active');
-  recordStatusText.textContent = "WAITING START...";
-  recordBtnText.textContent = "START RECORDING";
+  recordStatusText.textContent = "開始待機中...";
+  recordBtnText.textContent = "録音を開始する";
   recordBtn.classList.add('start-mode');
   recordBtn.querySelector('.stop-icon').textContent = "▶";
 }
 
 recordBtn.addEventListener('click', () => {
   if(!recognition) {
-    alert("Web Speech API is not supported in this browser.");
+    alert("お使いのブラウザは音声認識をサポートしていません。Chromeをご利用ください。");
     return;
   }
 
@@ -218,8 +218,8 @@ recordBtn.addEventListener('click', () => {
       isRecording = true;
       recordStartTime = Date.now();
       pulseDot.classList.add('active');
-      recordStatusText.textContent = "LIVE WAVEFORM CAPTURE ACTIVE";
-      recordBtnText.textContent = "STOP & ANALYZE";
+      recordStatusText.textContent = "🎙️ リアルタイム音声解析中...";
+      recordBtnText.textContent = "解析を停止する";
       recordBtn.classList.remove('start-mode');
       recordBtn.querySelector('.stop-icon').textContent = "■";
     } catch(e) {
@@ -268,16 +268,18 @@ function processAnalysis(userText, targetReading, durationSec) {
   if(accuracy >= 90) {
     scoreClarity.classList.add('clarity-high');
     clarityGrade.textContent = "A+";
+    techFeedback.textContent = "非常に素晴らしい滑舌です。音素の脱落がほとんどなく、明瞭に発音されています。";
+    optTip.textContent = "現在の調子を維持しましょう。";
   } else if(accuracy >= 70) {
     scoreClarity.classList.add('clarity-mid');
     clarityGrade.textContent = "B";
-    techFeedback.textContent = "Several phonetic drops detected. Focus on clear articulation.";
-    optTip.textContent = "Maintain steady pace.";
+    techFeedback.textContent = "いくつかの箇所で音の濁りや脱落が見られました。特に語尾までしっかりと発音することを意識してください。";
+    optTip.textContent = "一定のペースを保ち、呼吸を整えて発声しましょう。";
   } else {
     scoreClarity.classList.add('clarity-low');
     clarityGrade.textContent = "C";
-    techFeedback.textContent = "Significant mismatch detected. Speak more clearly and louder.";
-    optTip.textContent = "Take a deep breath and articulate each syllable.";
+    techFeedback.textContent = "不一致が多いようです。一音一音を丁寧に、口を大きく動かして発音してみてください。";
+    optTip.textContent = "深呼吸をして、リラックスした状態で再挑戦しましょう。";
   }
   
   diffContent.innerHTML = html;

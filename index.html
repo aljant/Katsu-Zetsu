@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外郎売り 滑舌チェッカー</title>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+      text-align: center;
+      padding: 2rem 1rem;
+      background-color: #f7f9fc;
+      color: #333;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 { font-size: 1.5rem; color: #2c3e50; }
+    #status-msg { color: #e67e22; font-weight: bold; font-size: 0.9rem; margin-bottom: 1rem; height: 1.5em; }
+    
+    .card { background: #f0f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; }
+    #target-text { font-size: 1.3rem; font-weight: bold; line-height: 1.6; margin-bottom: 0.5rem; }
+    #target-reading { font-size: 0.9rem; color: #666; }
+    
+    .btn {
+      padding: 12px 24px; font-size: 1rem; font-weight: bold; cursor: pointer;
+      border: none; border-radius: 30px; transition: 0.3s; margin: 0 5px;
+    }
+    #start-btn { background-color: #3498db; color: white; }
+    #start-btn:hover:not(:disabled) { background-color: #2980b9; }
+    #start-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+    #next-btn { background-color: #2ecc71; color: white; display: none; }
+    #next-btn:hover { background-color: #27ae60; }
+
+    .result-area { margin-top: 2rem; text-align: left; }
+    .result-label { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 0.5rem; }
+    #user-text { font-size: 1.2rem; line-height: 1.6; padding: 1rem; background: #fff; border: 1px solid #ddd; border-radius: 8px; min-height: 3em; }
+    
+    /* 判定用ハイライト */
+    .correct { color: #27ae60; }
+    .incorrect { color: #e74c3c; text-decoration: underline; font-weight: bold; }
+    
+    #score-display { font-size: 1.5rem; font-weight: bold; margin-top: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>外郎売り 滑舌チェッカー</h1>
+    <div id="status-msg">辞書データを読み込み中...</div>
+
+    <div class="card">
+      <div id="target-reading">（よみ）</div>
+      <div id="target-text">テキストを準備中...</div>
+    </div>
+
+    <div>
+      <button id="start-btn" disabled>🎙️ 話す（録音開始）</button>
+      <button id="next-btn">次の文章へ ＞</button>
+    </div>
+
+    <div class="result-area">
+      <div class="result-label">あなたの発音判定（間違えた箇所は赤くなります）：</div>
+      <div id="user-text"></div>
+      <div id="score-display"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/build/kuromoji.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

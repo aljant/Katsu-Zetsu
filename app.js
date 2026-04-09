@@ -11,7 +11,7 @@ const userTextEl = document.getElementById('user-text');
 const scoreDisplay = document.getElementById('score-display');
 
 // 1. kuromoji.js の初期化（辞書をCDNから直接読み込む）
-const dicUrl = "https://cdn.jsdelivr.net/npm/kuromoji@0.1.2/dict/";
+const dicUrl = "https://unpkg.com/kuromoji@0.1.2/dict/";
 kuromoji.builder({ dicPath: dicUrl }).build((err, _tokenizer) => {
   if (err) {
     statusMsg.textContent = "辞書の読み込みに失敗しました。";

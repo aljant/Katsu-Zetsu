@@ -19,16 +19,16 @@
       </div>
       <nav class="nav-menu">
         <button class="nav-item active" data-target="start">
-          <span class="nav-icon">🎙️</span> PRACTICE
+          <span class="nav-icon">🎙️</span> 練習開始
         </button>
         <button class="nav-item" data-target="analysis" id="nav-analysis" disabled>
-          <span class="nav-icon">📊</span> ANALYSIS
+          <span class="nav-icon">📊</span> 分析レポート
         </button>
         <button class="nav-item" data-target="dictionary">
-          <span class="nav-icon">📘</span> DICTIONARY
+          <span class="nav-icon">📘</span> 外郎売全文
         </button>
         <button class="nav-item" data-target="guide">
-          <span class="nav-icon">❔</span> GUIDE
+          <span class="nav-icon">❔</span> ガイド
         </button>
       </nav>
     </aside>
@@ -38,8 +38,8 @@
       <header class="top-bar">
         <h1 class="page-title">外郎売り 滑舌チェッカー</h1>
         <div class="top-controls">
-          <button class="icon-btn" title="History">⏱️</button>
-          <button class="icon-btn" title="Settings">⚙️</button>
+          <button class="icon-btn" title="履歴">⏱️</button>
+          <button class="icon-btn" title="設定">⚙️</button>
         </div>
       </header>
 
@@ -49,38 +49,38 @@
         <section id="view-start" class="view active">
           <div class="watermark">滑</div>
           <div class="start-header">
-            <span class="badge">CORE MODULE V1.0.4</span>
+            <span class="badge">コアモジュール V1.0.4</span>
             <h2 class="hero-title">外郎売り<br>滑舌チェッカー</h2>
             <p class="hero-desc">江戸歌舞伎の十八番「外郎売」を用いた高度な滑舌解析システム。<br>音素レベルでの正確性をリアルタイムで測定します。</p>
           </div>
 
           <div class="terminal-box" id="terminal-log">
             <div class="terminal-header">
-              <span>SYSTEM_LOG.TERMINAL</span>
+              <span>システムログ.ターミナル</span>
               <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
             </div>
             <div class="terminal-content">
-              <div class="log-line"><span class="log-time" id="log-time-1">08:42:01</span> <span class="log-level init">INIT</span> <span class="log-msg">Initializing recognition engine...</span></div>
-              <div class="log-line"><span class="log-time" id="log-time-2">08:42:02</span> <span class="log-level load">LOAD</span> <span class="log-msg">Fetching kuromoji dict...</span></div>
-              <div class="log-line"><span class="log-time" id="log-time-3">08:42:05</span> <span class="log-level ready" id="log-ready" style="display:none;">READY</span> <span class="log-msg" id="log-ready-msg" style="display:none;">System Ready. Dictionary version loaded.</span></div>
-              <div class="log-line log-blinking" id="log-awaiting" style="display:none;">-- Awaiting user input command...</div>
+              <div class="log-line"><span class="log-time" id="log-time-1">08:42:01</span> <span class="log-level init">INIT</span> <span class="log-msg">認識エンジンを初期化中...</span></div>
+              <div class="log-line"><span class="log-time" id="log-time-2">08:42:02</span> <span class="log-level load">LOAD</span> <span class="log-msg">Kuromoji辞書を読み込み中...</span></div>
+              <div class="log-line"><span class="log-time" id="log-time-3">08:42:05</span> <span class="log-level ready" id="log-ready" style="display:none;">READY</span> <span class="log-msg" id="log-ready-msg" style="display:none;">システム準備完了。辞書データがロードされました。</span></div>
+              <div class="log-line log-blinking" id="log-awaiting" style="display:none;">-- ユーザー入力を待機中...</div>
             </div>
           </div>
 
           <div class="start-actions">
             <button id="start-practice-btn" class="primary-btn huge disabled">
-              START PRACTICE <span class="arrow">➔</span>
+              練習を始める <span class="arrow">➔</span>
             </button>
             <div class="target-info">
-              <div class="info-label">CURRENT TARGET</div>
+              <div class="info-label">現在の練習目標</div>
               <div class="info-value">外郎売（全編）</div>
-              <div class="info-meta">948 CHARS &nbsp;&nbsp; LEVEL: ADVANCED</div>
+              <div class="info-meta">計 948 文字 &nbsp;&nbsp; 難易度: 上級</div>
             </div>
           </div>
 
           <footer class="tech-spec">
-            <div class="spec-label">TECHNICAL SPECIFICATION</div>
-            <p>Analysis uses Web Speech API and hidden Markov Models (conceptually) for phoneme alignment and accuracy grading.</p>
+            <div class="spec-label">テクニカル仕様</div>
+            <p>本ツールは Web Speech API を活用して音素の整合性と滑舌の正確性を判定します。</p>
           </footer>
         </section>
 
@@ -88,10 +88,10 @@
         <section id="view-practice" class="view">
           <div class="practice-header">
             <div class="session-info">
-              <span class="session-label">ACTIVE SESSION</span>
-              <h2 class="session-title" id="session-title">Section 01: The Introduction</h2>
+              <span class="session-label">セッション実行中</span>
+              <h2 class="session-title" id="session-title">第1節: 導入部分</h2>
             </div>
-            <div class="paragraph-counter" id="paragraph-counter">Paragraph 1 / 14</div>
+            <div class="paragraph-counter" id="paragraph-counter">段落 1 / 14</div>
           </div>
 
           <div class="card target-card">
@@ -102,24 +102,24 @@
 
           <div class="record-controls">
             <div class="waveform-indicator" id="waveform-indicator">
-              <span class="pulse-dot"></span> <span id="record-status-text">WAITING START...</span>
+              <span class="pulse-dot"></span> <span id="record-status-text">開始待機中...</span>
             </div>
             <button id="record-btn" class="record-btn stop-btn">
-              <span class="stop-icon">■</span> <span id="record-btn-text">START RECORDING</span>
+              <span class="stop-icon">■</span> <span id="record-btn-text">録音を開始する</span>
             </button>
             <div class="nav-buttons">
-              <button id="prev-btn" class="nav-btn"><span class="arrow">⏮</span> PREVIOUS</button>
-              <button id="next-btn" class="nav-btn">NEXT <span class="arrow">⏭</span></button>
+              <button id="prev-btn" class="nav-btn"><span class="arrow">⏮</span> 前へ</button>
+              <button id="next-btn" class="nav-btn">次へ <span class="arrow">⏭</span></button>
             </div>
           </div>
 
           <footer class="system-footer">
             <div class="sys-metrics">
               <div class="sys-left">
-                SYSTEM LATENCY: 12MS
+                システム遅延: 12MS
               </div>
               <div class="sys-right">
-                BUFFER: STABLE
+                バッファ: 安定
               </div>
             </div>
             <div class="waveform-bars">
@@ -127,8 +127,8 @@
               <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
             </div>
             <div class="sys-tags">
-              <span>SYSTEM_VER 1.0.4 // NOTO_SANS_JP</span>
-              <span>DICTIONARY STATUS: OK   LATENCY: 12MS</span>
+              <span>システム Ver 1.0.4 // NOTO_SANS_JP</span>
+              <span>辞書ステータス: 正常   応答時間: 12MS</span>
             </div>
           </footer>
         </section>
@@ -136,32 +136,32 @@
         <!-- View 3: Analysis Report -->
         <section id="view-analysis" class="view">
           <div class="analysis-header">
-            <div class="session-id">SESSION ID: ANALYZE_X992</div>
-            <h2 class="mega-title">Analysis Report.</h2>
-            <p class="report-desc">Detailed character-level breakdown of phoneme accuracy and articulation precision.</p>
+            <div class="session-id">セッション ID: ANALYZE_X992</div>
+            <h2 class="mega-title">分析レポート.</h2>
+            <p class="report-desc">音素レベルの正確性と調音精度を詳細にブレイクダウンした分析結果です。</p>
           </div>
 
           <div class="score-cards">
             <div class="score-card">
-              <div class="score-label">ACCURACY SCORE</div>
+              <div class="score-label">正解率（スコア）</div>
               <div class="score-value"><span id="score-accuracy">0.0</span><span class="score-unit">%</span></div>
             </div>
             <div class="score-card">
-              <div class="score-label">SPEECH PACE</div>
+              <div class="score-label">発話ペース</div>
               <div class="score-value"><span id="score-wpm">0</span><span class="score-unit">WPM</span></div>
             </div>
             <div class="score-card">
-              <div class="score-label">CLARITY INDEX</div>
-              <div class="score-value clarity-high" id="score-clarity"><span id="clarity-grade">A+</span><span class="score-unit">High</span></div>
+              <div class="score-label">明瞭度指標</div>
+              <div class="score-value clarity-high" id="score-clarity"><span id="clarity-grade">A+</span><span class="score-unit">良好</span></div>
             </div>
           </div>
 
           <div class="diff-section">
             <div class="diff-header">
-              <div class="diff-title">TRANSCRIPT DIFF ANALYSIS</div>
+              <div class="diff-title">差分分析結果（録音 vs お題）</div>
               <div class="diff-legend">
-                <span class="legend-item"><span class="box correct-box"></span> CORRECT</span>
-                <span class="legend-item"><span class="box incorrect-box"></span> INCORRECT</span>
+                <span class="legend-item"><span class="box correct-box"></span> 正解</span>
+                <span class="legend-item"><span class="box incorrect-box"></span> 不一致</span>
               </div>
             </div>
             <div class="diff-content card" id="diff-content">
@@ -171,19 +171,19 @@
 
           <div class="feedback-modules">
             <div class="feedback-card">
-              <div class="fb-header"><span class="icon">ℹ️</span> TECHNICAL OBSERVATION 01</div>
-              <p id="technical-feedback">The phonetic cluster exhibited a slight vowel compression. Focus on the rounding of the 'o' sound to increase score.</p>
+              <div class="fb-header"><span class="icon">ℹ️</span> テクニカル・オブザベーション</div>
+              <p id="technical-feedback">特定の音素で母音の圧縮が見られました。「お」の発音で口をしっかり丸めることを意識するとスコアが向上します。</p>
             </div>
             <div class="feedback-card">
-              <div class="fb-header"><span class="icon">⚡</span> OPTIMIZATION TIP</div>
-              <div class="fb-subtitle">Support</div>
-              <p id="optimization-tip">Volume dropped during the final sentence. Maintain consistent air pressure through long strings of kanji.</p>
+              <div class="fb-header"><span class="icon">⚡</span> 改善アドバイス</div>
+              <div class="fb-subtitle">発声サポート</div>
+              <p id="optimization-tip">文末で音量が低下する傾向があります。長い漢字の並びでも一定の呼気を維持しましょう。</p>
             </div>
           </div>
 
           <div class="analysis-actions">
-            <button id="analysis-next-btn" class="primary-btn">NEXT PARAGRAPH <span class="arrow">➔</span></button>
-            <button id="analysis-retry-btn" class="outline-btn"><span class="arrow">↻</span> RETRY SECTION</button>
+            <button id="analysis-next-btn" class="primary-btn">次の段落へ進む <span class="arrow">➔</span></button>
+            <button id="analysis-retry-btn" class="outline-btn"><span class="arrow">↻</span> この段落をやり直す</button>
           </div>
         </section>
 
@@ -205,14 +205,14 @@
           </div>
 
           <button id="dict-back-btn" class="outline-btn dict-back">
-            🎙️ Back to Practice
+            🎙️ 練習に戻る
           </button>
         </section>
 
         <!-- View 5: Guide (Placeholder) -->
         <section id="view-guide" class="view">
-          <h2>Guide & Settings</h2>
-          <p>Please use speech recognition in a quiet environment using Google Chrome for best results.</p>
+          <h2>ガイド & 設定</h2>
+          <p>滑舌練習を始める前に、静かな環境で Google Chrome を使用してマイク入力を許可してください。</p>
         </section>
       </div>
     </main>
